@@ -1,0 +1,61 @@
+<!-- УРЕЗАННЫЙ ВАРИАНТ ШАБЛОНА "accounts/login.html", ОТЛИЧАЮЩИЙСЯ ОТ ИСХОДНОГО ВАРИАНТА 
+В УСТАНОВОЧНОМ ПАКЕТЕ DJANGO-ALLAUTH -->
+
+{% extends 'flatpages/news.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% load i18n %}
+{% load allauth account %}
+{% block head_title %}
+    {% trans "ВХОД" %}
+{% endblock head_title %}
+{% block content %}    
+    {% element h1 %}
+        <p style="margin-left: 15px">{% trans "ВХОД" %}</p>    
+    {% endelement %}
+    {% if not SOCIALACCOUNT_ONLY %}
+        {% setvar link %}
+            <a href="{{ signup_url }}">
+            {% endsetvar %}
+            {% setvar end_link %}
+            </a>
+        {% endsetvar %}
+ 
+    <div style="margin-left: 15px; margin-right: 300px; font-size: x-large">
+        {% element form form=form method="post" action=login_url tags="entrance,login" %}
+            {% slot body %}
+                {% csrf_token %}
+                {{form|crispy}}
+                {{ redirect_field }}
+            {% endslot %}
+            {% slot actions %}
+                {% element button type="submit" tags="prominent,login" %}
+                    {% trans "Войти" %}
+                {% endelement %}
+            {% endslot %}
+        {% endelement %}
+        
+    {% endif %}
+
+    {% if LOGIN_BY_CODE_ENABLED %}
+        {% element hr %}
+        {% endelement %}
+        {% element h2 %}
+            {% element button href=request_login_code_url tags="prominent,login,secondary" %}
+                {% trans "Mail me a sign-in code" %}
+            {% endelement %}
+        {% endelement %}
+    {% endif %}
+    <br>
+    {% if SOCIALACCOUNT_ENABLED %}
+                        {% element p %}
+            Если у Вас отсутствует аккаунт, то можете пройти регистрацию
+                            <a href="{% url 'signup' %}" style="font-style: oblique"> <b> здесь </b>. </a>
+        {% endelement %}
+        Также можно авторизоваться через аккаунты на одном из нижеприведенных сервисов: 
+        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+
+    {% endif %}
+    </div>
+
+{% endblock content %}
